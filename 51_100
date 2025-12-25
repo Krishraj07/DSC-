@@ -1,0 +1,1889 @@
+51)  implement 2 stack in an array 
+
+Code: 
+
+#include <iostream>
+using namespace std;
+
+class TwoStacks {
+    int *arr;      // array to store both stacks
+    int size;      // total size of array
+    int top1, top2;
+
+public:
+    // Constructor
+    TwoStacks(int n) {
+        size = n;
+        arr = new int[n];
+        top1 = -1;       // Stack 1 starts from left
+        top2 = n;        // Stack 2 starts from right
+    }
+
+    // Push element to Stack 1
+    void push1(int x) {
+        if (top1 < top2 - 1) {     // check for space
+            arr[++top1] = x;
+        } else {
+            cout << "Stack Overflow in Stack 1\n";
+        }
+    }
+
+    // Push element to Stack 2
+    void push2(int x) {
+        if (top1 < top2 - 1) {     // check for space
+            arr[--top2] = x;
+        } else {
+            cout << "Stack Overflow in Stack 2\n";
+        }
+    }
+
+    // Pop element from Stack 1
+    int pop1() {
+        if (top1 >= 0) {
+            return arr[top1--];
+        } else {
+            cout << "Stack 1 Underflow\n";
+            return -1;
+        }
+    }
+
+    // Pop element from Stack 2
+    int pop2() {
+        if (top2 < size) {
+            return arr[top2++];
+        } else {
+            cout << "Stack 2 Underflow\n";
+            return -1;
+        }
+    }
+};
+
+int main() {
+    TwoStacks ts(10);  // 10-element array containing 2 stacks
+
+    ts.push1(10);
+    ts.push1(20);
+    ts.push1(30);
+
+    ts.push2(100);
+    ts.push2(200);
+
+    cout << "Popped from Stack 1: " << ts.pop1() << endl;
+    cout << "Popped from Stack 2: " << ts.pop2() << endl;
+
+    return 0;
+}
+
+Output:
+ 
+
+
+
+
+52) find the middle element in stack
+
+Code:
+
+#include <iostream>
+#include <stack>
+using namespace std;
+
+int findMiddle(stack<int> st) {
+    int n = st.size();
+
+    if (n == 0) {
+        cout << "Stack is empty!" << endl;
+        return -1;
+    }
+
+    int midIndex = n / 2;   // middle element index
+
+    // Pop elements until we reach the middle
+    for (int i = 0; i < midIndex; i++) {
+        st.pop();
+    }
+
+    return st.top();  // this is the middle element
+}
+
+int main() {
+    stack<int> st;
+
+    st.push(10);
+    st.push(20);
+    st.push(30);
+    st.push(40);
+    st.push(50); // middle -> 30
+
+    cout << "Middle element = " << findMiddle(st) << endl;
+
+    return 0;
+}
+Output: 
+ 
+53) Implement "N" stacks in an Array 
+Code: 
+#include <bits/stdc++.h>
+using namespace std;
+
+class NStacks {
+    int *arr;     // Array to store stack elements
+    int *top;     // Array to store indexes of top elements of stacks
+    int *next;    // Array to store next entry (free list or stack link)
+    int n, size;  // n = number of stacks, size = total capacity
+    int freeTop;  // Beginning index of free list
+
+public:
+    // Constructor
+    NStacks(int n, int size) {
+        this->n = n;
+        this->size = size;
+        arr = new int[size];
+        top = new int[n];
+        next = new int[size];
+
+        // Initialize all stacks as empty
+        for (int i = 0; i < n; i++)
+            top[i] = -1;
+
+        // Initialize free list
+        freeTop = 0;
+        for (int i = 0; i < size - 1; i++)
+            next[i] = i + 1;
+        next[size - 1] = -1; // End of free list
+    }
+
+    // Push operation
+    void push(int stackNum, int value) {
+        if (freeTop == -1) {
+            cout << "Stack Overflow\n";
+            return;
+        }
+
+        int i = freeTop;        // Get free index
+        freeTop = next[i];      // Update freeTop to next free slot
+        arr[i] = value;         // Insert value
+        next[i] = top[stackNum]; // Link new element to previous top
+        top[stackNum] = i;      // Update top of stack
+    }
+
+    // Pop operation
+    int pop(int stackNum) {
+        if (top[stackNum] == -1) {
+            cout << "Stack Underflow\n";
+            return INT_MIN;
+        }
+
+        int i = top[stackNum];   // Index of top element
+        top[stackNum] = next[i]; // Update top to next element
+        next[i] = freeTop;       // Add this index to free list
+        freeTop = i;
+        return arr[i];
+    }
+};
+
+int main() {
+    int N = 3, S = 10;
+    NStacks stacks(N, S);
+
+    stacks.push(0, 10);
+    stacks.push(1, 20);
+    stacks.push(2, 30);
+    stacks.push(0, 40);
+
+    cout << stacks.pop(0) << endl; // 40
+    cout << stacks.pop(1) << endl; // 20
+    cout << stacks.pop(2) << endl; // 30
+}
+
+Output:
+ 
+
+
+
+54) Check the expression has valid or Balanced parenthesis or not.
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+bool isBalanced(const string &s) {
+    stack<char> st;
+    for (char c : s) {
+        if (c=='(' || c=='{' || c=='[')
+            st.push(c);
+
+        else if (c==')' || c=='}' || c==']') {
+            if (st.empty()) return false;
+
+            char t = st.top();
+            st.pop();
+
+            if ((c==')' && t!='(') ||
+                (c=='}' && t!='{') ||
+                (c==']' && t!='['))
+                return false;
+        }
+    }
+    return st.empty();
+}
+
+int main() {
+    string s;
+    cout << "Enter expression: ";
+    getline(cin, s);
+
+    if (isBalanced(s))
+        cout << "Balanced\n";
+    else
+        cout << "Not Balanced\n";
+
+    return 0;
+}
+Output:
+ 
+ 
+
+55) Reverse a String using Stack
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+string reverseWithStack(const string &s) {
+    stack<char> st;
+    for (char c : s)
+        st.push(c);
+
+    string r;
+    r.reserve(s.size());
+
+    while (!st.empty()) {
+        r.push_back(st.top());
+        st.pop();
+    }
+    return r;
+}
+
+int main() {
+    string s;
+    cout << "Enter a string: ";
+    getline(cin, s);
+
+    cout << "Reversed: " << reverseWithStack(s) << endl;
+
+    return 0;
+}
+
+Output:
+
+ 
+
+
+
+
+56) Design a Stack that supports getMin() in O(1) time and O(1) extra space.
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+class MinStack {
+    stack<long long> st; 
+    long long mn;
+
+public:
+    MinStack(): mn(LLONG_MAX) {}
+
+    void push(long long x) {
+        if (st.empty()) {
+            st.push(0);
+            mn = x;
+        } else {
+            long long diff = x - mn;
+            st.push(diff);
+            if (x < mn) mn = x;
+        }
+    }
+
+    void pop() {
+        long long diff = st.top();
+        st.pop();
+
+        if (diff < 0) {
+            // diff = x - previousMin  (negative means x < mn)
+            // restore previous minimum
+            mn = mn - diff;
+        }
+    }
+
+    long long top() {
+        long long diff = st.top();
+        return diff >= 0 ? mn + diff : mn;
+    }
+
+    long long getMin() {
+        return mn;
+    }
+
+    bool empty() const { 
+        return st.empty(); 
+    }
+};
+
+int main() {
+    MinStack ms;
+
+    ms.push(5);
+    ms.push(3);
+    ms.push(8);
+    ms.push(2);
+
+    cout << "Top: " << ms.top() << endl;
+    cout << "Min: " << ms.getMin() << endl;
+
+    ms.pop();
+    cout << "After pop, Min: " << ms.getMin() << endl;
+
+    return 0;
+}
+
+Output:
+ 
+
+57) Find the next Greater element
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> nextGreaterElements(const vector<int>& a) {
+    int n = a.size();
+    vector<int> res(n, -1);
+    stack<int> st; // indices
+
+    for (int i = 0; i < n; ++i) {
+        while (!st.empty() && a[i] > a[st.top()]) {
+            res[st.top()] = a[i];
+            st.pop();
+        }
+        st.push(i);
+    }
+    return res;
+}
+
+int main() {
+    int n;
+    cout << "Enter size: ";
+    cin >> n;
+
+    vector<int> a(n);
+    cout << "Enter elements:\n";
+    for (int i = 0; i < n; i++)
+        cin >> a[i];
+
+    vector<int> ans = nextGreaterElements(a);
+
+    cout << "Next Greater Elements:\n";
+    for (int x : ans) 
+        cout << x << " ";
+
+    cout << endl;
+    return 0;
+}
+Output:
+ 
+
+
+
+58) The celebrity Problem
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+bool knows(int a, int b, const vector<vector<int>>& M) {
+    return M[a][b];
+}
+
+int findCelebrity(const vector<vector<int>>& M) {
+    int n = M.size();
+    int cand = 0;
+
+    // Step 1: Find a candidate
+    for (int i = 1; i < n; i++) {
+        if (knows(cand, i, M))
+            cand = i;
+    }
+
+    // Step 2: Verify candidate
+    for (int i = 0; i < n; i++) {
+        if (i == cand) continue;
+
+        // Celebrity does NOT know anyone
+        if (knows(cand, i, M)) 
+            return -1;
+
+        // Everyone must know celebrity
+        if (!knows(i, cand, M)) 
+            return -1;
+    }
+
+    return cand;
+}
+
+int main() {
+    int n;
+    cout << "Enter number of people: ";
+    cin >> n;
+
+    vector<vector<int>> M(n, vector<int>(n));
+
+    cout << "Enter matrix (0/1):\n";
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            cin >> M[i][j];
+
+    int celeb = findCelebrity(M);
+
+    if (celeb == -1)
+        cout << "No celebrity exists\n";
+    else
+        cout << "Celebrity is person: " << celeb << endl;
+
+    return 0;
+}
+Output:
+ 
+
+59) Arithmetic Expression evaluation
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+int precedence(char op) {
+    if (op=='+'||op=='-') return 1;
+    if (op=='*'||op=='/') return 2;
+    if (op=='^') return 3;
+    return 0;
+}
+
+long long applyOp(long long a, long long b, char op) {
+    if (op=='+') return a+b;
+    if (op=='-') return a-b;
+    if (op=='*') return a*b;
+    if (op=='/') return a/b;
+    if (op=='^') return (long long)pow((long double)a, (long double)b);
+    return 0;
+}
+
+long long evalInfix(const string &s) {
+    stack<long long> vals;
+    stack<char> ops;
+
+    auto flush = [&]() {
+        long long b = vals.top(); vals.pop();
+        long long a = vals.top(); vals.pop();
+        char op = ops.top(); ops.pop();
+        vals.push(applyOp(a, b, op));
+    };
+
+    for (size_t i = 0; i < s.size();) {
+        if (isspace(s[i])) { i++; continue; }
+
+        if (s[i] == '(') {
+            ops.push(s[i]);
+            i++;
+        }
+        else if (isdigit(s[i])) {
+            long long v = 0;
+            while (i < s.size() && isdigit(s[i])) {
+                v = v * 10 + (s[i] - '0');
+                i++;
+            }
+            vals.push(v);
+        }
+        else if (s[i] == ')') {
+            while (!ops.empty() && ops.top() != '(')
+                flush();
+            if (!ops.empty()) ops.pop(); // pop '('
+            i++;
+        }
+        else {
+            char op = s[i++];
+            while (!ops.empty() && ops.top() != '(' &&
+                   ((precedence(ops.top()) > precedence(op)) ||
+                    (precedence(ops.top()) == precedence(op) && op != '^')))
+                flush();
+            ops.push(op);
+        }
+    }
+
+    while (!ops.empty()) flush();
+    return vals.top();
+}
+
+int main() {
+    string exp;
+    cout << "Enter infix expression:\n";
+    getline(cin, exp);
+
+    cout << "Result = " << evalInfix(exp) << endl;
+
+    return 0;
+}
+Output:
+ 
+
+60) Evaluation of Postfix expression
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+long long evalPostfix(const vector<string>& tokens) {
+    stack<long long> st;
+
+    for (const string &t : tokens) {
+
+        // Check if token is a number (positive or negative)
+        if (isdigit(t[0]) || (t.size() > 1 && (t[0] == '-' || t[0] == '+') && isdigit(t[1]))) {
+            st.push(stoll(t));
+        } else {
+            // Operator case
+            long long b = st.top(); st.pop();
+            long long a = st.top(); st.pop();
+
+            if (t == "+") st.push(a + b);
+            else if (t == "-") st.push(a - b);
+            else if (t == "*") st.push(a * b);
+            else if (t == "/") st.push(a / b);
+            else if (t == "^") st.push((long long) pow((long double)a, (long double)b));
+        }
+    }
+
+    return st.top();
+}
+
+// Example usage
+int main() {
+    vector<string> exp = {"10", "2", "/", "3", "+"}; 
+    cout << "Result: " << evalPostfix(exp) << endl;
+    return 0;
+}
+
+Output:
+ 
+
+61) Implement a method to insert an element at its bottom without using any other data structure.
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+void insertAtBottom(stack<int>& st, int x) {
+    if (st.empty()) {       // Base case: if stack is empty, push x
+        st.push(x);
+        return;
+    }
+    int t = st.top();       // Store top element
+    st.pop();               // Remove top
+    insertAtBottom(st, x);  // Recursive call
+    st.push(t);             // Push back the stored element
+}
+
+void printStack(stack<int> st) { // Pass by value to preserve original stack
+    while (!st.empty()) {
+        cout << st.top() << " ";
+        st.pop();
+    }
+    cout << endl;
+}
+
+int main() {
+    stack<int> st;
+    st.push(1);
+    st.push(2);
+    st.push(3);
+
+    cout << "Original Stack: ";
+    printStack(st);
+
+    insertAtBottom(st, 0);
+
+    cout << "After inserting 0 at bottom: ";
+    printStack(st);
+
+    return 0;
+}
+Output:
+ 
+
+62) Reverse a stack using recursion
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+// Insert an element at the bottom of the stack
+void insertAtBottom(stack<int>& st, int x) {
+    if (st.empty()) {
+        st.push(x);
+        return;
+    }
+    int t = st.top();
+    st.pop();
+    insertAtBottom(st, x);
+    st.push(t);
+}
+
+// Reverse the stack using recursion
+void reverseStack(stack<int>& st) {
+    if (st.empty()) return;
+    int t = st.top();
+    st.pop();
+    reverseStack(st);
+    insertAtBottom(st, t);
+}
+
+// Print stack from top to bottom
+void printStack(stack<int> st) {
+    while (!st.empty()) {
+        cout << st.top() << " ";
+        st.pop();
+    }
+    cout << endl;
+}
+
+int main() {
+    stack<int> st;
+    st.push(1);
+    st.push(2);
+    st.push(3);
+    st.push(4);
+
+    cout << "Original Stack (top to bottom): ";
+    printStack(st);
+
+    reverseStack(st);
+
+    cout << "Reversed Stack (top to bottom): ";
+    printStack(st);
+
+    return 0;
+}
+Output:
+ 
+
+
+
+63) Sort a Stack using recursion
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+// Insert element in sorted order into stack
+void sortedInsert(stack<int>& st, int x) {
+    if (st.empty() || st.top() <= x) {
+        st.push(x);
+        return;
+    }
+    int t = st.top(); 
+    st.pop();
+    sortedInsert(st, x);
+    st.push(t);
+}
+
+// Sort the stack using recursion
+void sortStack(stack<int>& st) {
+    if (st.empty()) return;
+    int t = st.top();
+    st.pop();
+    sortStack(st);
+    sortedInsert(st, t);
+}
+
+// Print stack from top to bottom
+void printStack(stack<int> st) {
+    while (!st.empty()) {
+        cout << st.top() << " ";
+        st.pop();
+    }
+    cout << endl;
+}
+
+int main() {
+    stack<int> st;
+    st.push(3);
+    st.push(1);
+    st.push(4);
+    st.push(2);
+
+    cout << "Original Stack (top to bottom): ";
+    printStack(st);
+
+    sortStack(st);
+
+    cout << "Sorted Stack (top to bottom): ";
+    printStack(st);
+
+    return 0;  // Make sure main ends properly
+}
+Output:
+ 
+64) Merge Overlapping Intervals
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+// Function to check for redundant brackets
+bool hasRedundantBrackets(const string &s) {
+    stack<char> st;
+
+    for (char c : s) {
+        if (c == ')') {
+            bool opFound = false;
+            while (!st.empty() && st.top() != '(') {
+                char t = st.top();
+                st.pop();
+                if (t == '+' || t == '-' || t == '*' || t == '/' || t == '^')
+                    opFound = true;
+            }
+            if (!st.empty()) st.pop(); // pop the '('
+            if (!opFound) return true; // no operator found → redundant
+        } else {
+            st.push(c);
+        }
+    }
+
+    return false;
+}
+
+int main() {
+    string expr;
+    cout << "Enter an expression: ";
+    cin >> expr;
+
+    if (hasRedundantBrackets(expr))
+        cout << "Expression has redundant brackets.\n";
+    else
+        cout << "No redundant brackets found.\n";
+
+    return 0;
+}
+Output:
+ 
+ 
+65) Largest rectangular Area in Histogram
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+// Function to calculate largest rectangle area in histogram
+int largestRectangleArea(vector<int>& heights) {
+    stack<int> st;
+    heights.push_back(0); // Sentinel to pop remaining bars
+    int maxArea = 0;
+    int n = heights.size();
+
+    for (int i = 0; i < n; i++) {
+        while (!st.empty() && heights[i] < heights[st.top()]) {
+            int h = heights[st.top()]; st.pop();
+            int w = st.empty() ? i : i - st.top() - 1;
+            maxArea = max(maxArea, h * w);
+        }
+        st.push(i);
+    }
+    return maxArea;
+}
+
+int main() {
+    int n;
+    cout << "Enter number of bars in histogram: ";
+    cin >> n;
+    vector<int> heights(n);
+    cout << "Enter heights of bars: ";
+    for (int i = 0; i < n; i++) cin >> heights[i];
+
+    int ans = largestRectangleArea(heights);
+    cout << "Largest Rectangular Area = " << ans << endl;
+    return 0;
+}
+Output:
+ 
+
+66) Length of the Longest Valid Substring
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+// Function to find length of longest valid parentheses substring
+int longestValidParentheses(const string &s) {
+    stack<int> st;
+    st.push(-1); // Base for valid substring
+    int maxLen = 0;
+
+    for (int i = 0; i < s.size(); i++) {
+        if (s[i] == '(') {
+            st.push(i);
+        } else {
+            st.pop();
+            if (st.empty())
+                st.push(i);
+            else
+                maxLen = max(maxLen, i - st.top());
+        }
+    }
+
+    return maxLen;
+}
+
+int main() {
+    string s;
+    cout << "Enter parentheses string: ";
+    cin >> s;
+
+    int len = longestValidParentheses(s);
+    cout << "Length of longest valid parentheses substring: " << len << endl;
+    return 0;
+}
+Output:
+ 
+
+67) Expression contains redundant bracket or not
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+// Function to check for redundant brackets
+bool hasRedundantBrackets(const string &s) {
+    stack<char> st;
+
+    for (char c : s) {
+        if (c == ')') {
+            bool opFound = false;
+            while (!st.empty() && st.top() != '(') {
+                char t = st.top();
+                st.pop();
+                if (t == '+' || t == '-' || t == '*' || t == '/' || t == '^')
+                    opFound = true;
+            }
+            if (!st.empty()) st.pop(); // Pop the '('
+            if (!opFound) return true; // No operator inside → redundant
+        } else {
+            st.push(c);
+        }
+    }
+
+    return false;
+}
+
+int main() {
+    string expr;
+    cout << "Enter expression: ";
+    cin >> expr;
+
+    if (hasRedundantBrackets(expr))
+        cout << "Expression has redundant brackets.\n";
+    else
+        cout << "No redundant brackets found.\n";
+
+    return 0;
+}
+Output:
+ 
+ 
+
+68) Implement Stack using Queue
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+// Stack implemented using two queues
+class StackUsingQueue {
+    queue<int> q1, q2;
+
+public:
+    // Push operation
+    void push(int x) {
+        q1.push(x);
+    }
+
+    // Pop operation
+    void pop() {
+        if (q1.empty()) {
+            cout << "Stack is empty!\n";
+            return;
+        }
+        // Move all but last element to q2
+        while (q1.size() > 1) {
+            q2.push(q1.front());
+            q1.pop();
+        }
+        // Remove last element
+        q1.pop();
+        // Swap q1 and q2
+        swap(q1, q2);
+    }
+
+    // Top operation
+    int top() {
+        if (q1.empty()) {
+            cout << "Stack is empty!\n";
+            return -1;
+        }
+        while (q1.size() > 1) {
+            q2.push(q1.front());
+            q1.pop();
+        }
+        int t = q1.front();
+        q2.push(t);
+        q1.pop();
+        swap(q1, q2);
+        return t;
+    }
+
+    bool empty() {
+        return q1.empty();
+    }
+};
+
+int main() {
+    StackUsingQueue st;
+    st.push(10);
+    st.push(20);
+    st.push(30);
+
+    cout << "Top element: " << st.top() << endl; // 30
+    st.pop();
+
+    cout << "Top element after pop: " << st.top() << endl; // 20
+    st.pop();
+
+    cout << "Is stack empty? " << (st.empty() ? "Yes" : "No") << endl;
+
+    return 0;
+}
+Output:
+ 
+
+69) Implement Stack using Deque
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+// Stack implemented using Deque
+class StackUsingDeque {
+    deque<int> dq;
+
+public:
+    // Push operation
+    void push(int x) {
+        dq.push_back(x);
+    }
+
+    // Pop operation
+    void pop() {
+        if (dq.empty()) {
+            cout << "Stack is empty!\n";
+            return;
+        }
+        dq.pop_back();
+    }
+
+    // Top operation
+    int top() {
+        if (dq.empty()) {
+            cout << "Stack is empty!\n";
+            return -1;
+        }
+        return dq.back();
+    }
+
+    // Check if stack is empty
+    bool empty() {
+        return dq.empty();
+    }
+};
+
+int main() {
+    StackUsingDeque st;
+    st.push(5);
+    st.push(15);
+    st.push(25);
+
+    cout << "Top element: " << st.top() << endl; // 25
+    st.pop();
+
+    cout << "Top element after pop: " << st.top() << endl; // 15
+    st.pop();
+
+    cout << "Is stack empty? " << (st.empty() ? "Yes" : "No") << endl;
+
+    return 0;
+}
+Output:
+ 
+
+
+
+
+
+
+70) Stack Permutations (Check if an array is stack permutation of other)
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+bool isStackPermutation(vector<int>& inp, vector<int>& out) {
+    stack<int> st;
+    int i = 0;
+    for (int x : inp) {
+        st.push(x);
+        while (!st.empty() && st.top() == out[i]) {
+            st.pop();
+            i++;
+        }
+    }
+    return st.empty();
+}
+
+int main() {
+    int n;
+    cout << "Enter size of arrays: ";
+    cin >> n;
+    vector<int> inp(n), out(n);
+    cout << "Enter input array: ";
+    for (int i = 0; i < n; i++) cin >> inp[i];
+    cout << "Enter output array: ";
+    for (int i = 0; i < n; i++) cin >> out[i];
+
+    cout << (isStackPermutation(inp, out) ? "Yes, it's a stack permutation\n" : "No\n");
+    return 0;
+}
+Output:
+ 
+71) Implement Queue using Stack  
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+class QueueUsingStack {
+    stack<int> s1, s2;
+public:
+    void push(int x) { s1.push(x); }
+    void pop() {
+        if (s2.empty()) while (!s1.empty()) { s2.push(s1.top()); s1.pop(); }
+        s2.pop();
+    }
+    int front() {
+        if (s2.empty()) while (!s1.empty()) { s2.push(s1.top()); s1.pop(); }
+        return s2.top();
+    }
+    bool empty() { return s1.empty() && s2.empty(); }
+};
+
+int main() {
+    QueueUsingStack q;
+    q.push(10); q.push(20); q.push(30);
+    cout << "Front: " << q.front() << endl; q.pop();
+    cout << "Front: " << q.front() << endl; q.pop();
+    cout << "Is empty? " << (q.empty() ? "Yes" : "No") << endl;
+    return 0;
+}
+Output:
+ 
+72) Implement "n" queue in an array
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+class NQueue {
+    int n, size, freespot;
+    vector<int> arr, front, rear, next;
+public:
+    NQueue(int n_, int size_) {
+        n = n_; size = size_;
+        arr.resize(size); front.resize(n, -1); rear.resize(n, -1); next.resize(size);
+        for (int i = 0; i < size-1; i++) next[i] = i+1;
+        next[size-1] = -1; freespot = 0;
+    }
+
+    void enqueue(int qn, int x) {
+        if (freespot == -1) { cout << "Overflow\n"; return; }
+        int i = freespot; freespot = next[i];
+        arr[i] = x;
+        if (front[qn] == -1) front[qn] = i;
+        else next[rear[qn]] = i;
+        rear[qn] = i; next[i] = -1;
+    }
+
+    int dequeue(int qn) {
+        if (front[qn] == -1) { cout << "Underflow\n"; return -1; }
+        int i = front[qn];
+        front[qn] = next[i];
+        next[i] = freespot;
+        freespot = i;
+        return arr[i];
+    }
+};
+
+int main() {
+    NQueue q(3, 10); // 3 queues in array of size 10
+    q.enqueue(0, 10); q.enqueue(1, 20); q.enqueue(2, 30);
+    cout << "Dequeued from queue 0: " << q.dequeue(0) << endl;
+    cout << "Dequeued from queue 1: " << q.dequeue(1) << endl;
+    return 0;
+}
+Output:
+ 
+
+
+
+
+
+73) Implement a Circular queue
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+class CircularQueue {
+    vector<int> arr;
+    int front, rear, size;
+public:
+    CircularQueue(int n) { arr.resize(n); front = -1; rear = -1; size = n; }
+
+    void enqueue(int x) {
+        if ((rear + 1) % size == front) { cout << "Queue Full\n"; return; }
+        if (front == -1) front = 0;
+        rear = (rear + 1) % size;
+        arr[rear] = x;
+    }
+
+    int dequeue() {
+        if (front == -1) { cout << "Queue Empty\n"; return -1; }
+        int val = arr[front];
+        if (front == rear) front = rear = -1;
+        else front = (front + 1) % size;
+        return val;
+    }
+};
+
+int main() {
+    CircularQueue q(5);
+    q.enqueue(10); q.enqueue(20); q.enqueue(30);
+    cout << "Dequeued: " << q.dequeue() << endl;
+    q.enqueue(40); q.enqueue(50); q.enqueue(60); // Circular behavior
+    return 0;
+}
+Output:
+ 
+
+
+
+
+
+
+74) LRU Cache Implementationa
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+class LRUCache {
+    int cap;
+    list<int> dq;
+    unordered_map<int, pair<int, list<int>::iterator>> mp;
+public:
+    LRUCache(int capacity) { cap = capacity; }
+
+    int get(int key) {
+        if (mp.find(key) == mp.end()) return -1;
+        dq.erase(mp[key].second);
+        dq.push_front(key);
+        mp[key].second = dq.begin();
+        return mp[key].first;
+    }
+
+    void put(int key, int value) {
+        if (mp.find(key) != mp.end()) dq.erase(mp[key].second);
+        else if (dq.size() == cap) { int last = dq.back(); dq.pop_back(); mp.erase(last); }
+        dq.push_front(key);
+        mp[key] = {value, dq.begin()};
+    }
+};
+
+int main() {
+    LRUCache cache(2);
+    cache.put(1, 10);
+    cache.put(2, 20);
+    cout << "Get 1: " << cache.get(1) << endl;
+    cache.put(3, 30);
+    cout << "Get 2: " << cache.get(2) << endl; // -1 because removed
+    return 0;
+}
+Output:
+ 
+
+
+75) Reverse a Queue using recursion
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+void reverseQueue(queue<int> &q) {
+    if (q.empty()) return;
+    int x = q.front(); q.pop();
+    reverseQueue(q);
+    q.push(x);
+}
+
+int main() {
+    queue<int> q;
+    q.push(1); q.push(2); q.push(3); q.push(4);
+    reverseQueue(q);
+    while (!q.empty()) { cout << q.front() << " "; q.pop(); }
+    cout << endl;
+    return 0;
+}
+Output:
+ 
+76) Reverse the first “K” elements of a queue
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+void reverseK(queue<int> &q, int k) {
+    stack<int> s;
+    for (int i = 0; i < k; i++) { s.push(q.front()); q.pop(); }
+    while (!s.empty()) { q.push(s.top()); s.pop(); }
+    int t = q.size() - k;
+    for (int i = 0; i < t; i++) { q.push(q.front()); q.pop(); }
+}
+
+int main() {
+    queue<int> q;
+    int k = 3;
+    for (int i = 1; i <= 5; i++) q.push(i);
+    reverseK(q, k);
+    while (!q.empty()) { cout << q.front() << " "; q.pop(); }
+    cout << endl;
+    return 0;
+}
+Output:
+ 
+
+77) Interleave the first half of the queue with second half
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+void interleaveQueue(queue<int> &q) {
+    int n = q.size();
+    stack<int> s;
+    for (int i = 0; i < n/2; i++) { s.push(q.front()); q.pop(); }
+    while (!s.empty()) { q.push(s.top()); s.pop(); }
+    for (int i = 0; i < n/2; i++) { q.push(q.front()); q.pop(); }
+    for (int i = 0; i < n/2; i++) { s.push(q.front()); q.pop(); }
+    while (!s.empty()) { q.push(s.top()); s.pop(); q.push(q.front()); q.pop(); }
+}
+
+int main() {
+    queue<int> q;
+    for (int i = 1; i <= 6; i++) q.push(i);
+    interleaveQueue(q);
+    while (!q.empty()) { cout << q.front() << " "; q.pop(); }
+    cout << endl;
+    return 0;
+}
+Output:
+ 
+
+78) Find the first circular tour that visits all Petrol Pumps
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+struct PetrolPump { int petrol, distance; };
+
+int circularTour(vector<PetrolPump> &arr) {
+    int start = 0, balance = 0, deficit = 0;
+    for (int i = 0; i < arr.size(); i++) {
+        balance += arr[i].petrol - arr[i].distance;
+        if (balance < 0) { start = i + 1; deficit += balance; balance = 0; }
+    }
+    return (balance + deficit >= 0) ? start : -1;
+}
+
+int main() {
+    int n; cout << "Number of pumps: "; cin >> n;
+    vector<PetrolPump> arr(n);
+    for (int i = 0; i < n; i++) cin >> arr[i].petrol >> arr[i].distance;
+    int start = circularTour(arr);
+    if (start != -1) cout << "Start at pump: " << start << endl;
+    else cout << "No possible tour\n";
+    return 0;
+}
+Output:
+ 
+79) Minimum time required to rot all oranges
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+int orangesRotting(vector<vector<int>> &grid) {
+    int n = grid.size(), m = grid[0].size();
+    queue<pair<int,int>> q;
+    int fresh = 0, time = 0;
+    
+    for(int i=0;i<n;i++)
+        for(int j=0;j<m;j++)
+            if(grid[i][j]==2) q.push({i,j});
+            else if(grid[i][j]==1) fresh++;
+    
+    int dx[] = {-1,0,1,0};
+    int dy[] = {0,1,0,-1};
+    
+    while(!q.empty() && fresh) {
+        int sz = q.size();
+        time++;
+        for(int i=0;i<sz;i++){
+            auto [x,y] = q.front(); q.pop();
+            for(int d=0;d<4;d++){
+                int nx = x + dx[d], ny = y + dy[d];
+                if(nx>=0 && nx<n && ny>=0 && ny<m && grid[nx][ny]==1){
+                    grid[nx][ny]=2; fresh--; q.push({nx,ny});
+                }
+            }
+        }
+    }
+    return fresh? -1 : time;
+}
+
+int main() {
+    int n,m; cin >> n >> m;
+    vector<vector<int>> grid(n,vector<int>(m));
+    for(int i=0;i<n;i++) for(int j=0;j<m;j++) cin >> grid[i][j];
+    int ans = orangesRotting(grid);
+    cout << "Minimum time to rot all oranges: " << ans << endl;
+    return 0;
+}
+Output:
+
+80) Distance of nearest cell having 1 in a binary matrix
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> nearestCellWithOne(vector<vector<int>> &mat){
+    int n=mat.size(), m=mat[0].size();
+    vector<vector<int>> dist(n,vector<int>(m,INT_MAX));
+    queue<pair<int,int>> q;
+    for(int i=0;i<n;i++)
+        for(int j=0;j<m;j++)
+            if(mat[i][j]==1){ dist[i][j]=0; q.push({i,j}); }
+    int dx[]={-1,0,1,0}, dy[]={0,1,0,-1};
+    while(!q.empty()){
+        auto [x,y]=q.front(); q.pop();
+        for(int d=0;d<4;d++){
+            int nx=x+dx[d], ny=y+dy[d];
+            if(nx>=0 && nx<n && ny>=0 && ny<m && dist[nx][ny]>dist[x][y]+1){
+                dist[nx][ny]=dist[x][y]+1;
+                q.push({nx,ny});
+            }
+        }
+    }
+    return dist;
+}
+
+int main() {
+    int n,m; cin >> n >> m;
+    vector<vector<int>> mat(n,vector<int>(m));
+    for(int i=0;i<n;i++) for(int j=0;j<m;j++) cin >> mat[i][j];
+    vector<vector<int>> ans=nearestCellWithOne(mat);
+    for(auto &row:ans){
+        for(int x:row) cout << x << " ";
+        cout << endl;
+    }
+    return 0;
+}
+Output:
+81) First negative integer in every window of size “k”
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> firstNegativeInWindow(vector<int> &arr,int k){
+    queue<int> q;
+    vector<int> res;
+    for(int i=0;i<arr.size();i++){
+        if(arr[i]<0) q.push(i);
+        if(i>=k-1){
+            while(!q.empty() && q.front()<=i-k) q.pop();
+            res.push_back(q.empty()?0:arr[q.front()]);
+        }
+    }
+    return res;
+}
+
+int main() {
+    int n,k; cin >> n >> k;
+    vector<int> arr(n);
+    for(int i=0;i<n;i++) cin >> arr[i];
+    vector<int> ans=firstNegativeInWindow(arr,k);
+    for(int x:ans) cout << x << " ";
+    cout << endl;
+    return 0;
+}
+Output:
+82) Check if all levels of two trees are anagrams or not.
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Node{ int data; Node *left,*right; Node(int x){data=x; left=right=nullptr;}};
+
+bool areLevelsAnagrams(Node* root1, Node* root2){
+    if(!root1 && !root2) return true;
+    if(!root1 || !root2) return false;
+    queue<Node*> q1,q2;
+    q1.push(root1); q2.push(root2);
+    while(!q1.empty() && !q2.empty()){
+        int n=q1.size();
+        if(n!=q2.size()) return false;
+        vector<int> v1,v2;
+        for(int i=0;i<n;i++){
+            Node *t1=q1.front(); q1.pop();
+            Node *t2=q2.front(); q2.pop();
+            v1.push_back(t1->data); v2.push_back(t2->data);
+            if(t1->left) q1.push(t1->left);
+            if(t1->right) q1.push(t1->right);
+            if(t2->left) q2.push(t2->left);
+            if(t2->right) q2.push(t2->right);
+        }
+        sort(v1.begin(),v1.end()); sort(v2.begin(),v2.end());
+        if(v1!=v2) return false;
+    }
+    return q1.empty() && q2.empty();
+}
+
+int main() {
+    Node *root1=new Node(1); root1->left=new Node(3); root1->right=new Node(2);
+    Node *root2=new Node(1); root2->left=new Node(2); root2->right=new Node(3);
+    cout << (areLevelsAnagrams(root1,root2)?"Yes":"No") << endl;
+    return 0;
+}
+Output:
+83) Sum of minimum and maximum elements of all subarrays of size “k”.
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+long long sumOfMinMax(vector<int> &arr,int k){
+    deque<int> maxd, mind;
+    long long sum=0;
+    for(int i=0;i<arr.size();i++){
+        while(!maxd.empty() && arr[i]>=arr[maxd.back()]) maxd.pop_back();
+        while(!mind.empty() && arr[i]<=arr[mind.back()]) mind.pop_back();
+        maxd.push_back(i); mind.push_back(i);
+        if(i>=k-1){
+            sum+=arr[maxd.front()]+arr[mind.front()];
+            if(maxd.front()<=i-k) maxd.pop_front();
+            if(mind.front()<=i-k) mind.pop_front();
+        }
+    }
+    return sum;
+}
+
+int main(){
+    int n,k; cin >> n >> k;
+    vector<int> arr(n);
+    for(int i=0;i<n;i++) cin >> arr[i];
+    cout << sumOfMinMax(arr,k) << endl;
+    return 0;
+}
+Output:
+84) Minimum sum of squares of character counts in a given string after removing “k” characters.
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+int minSumSquares(string s,int k){
+    vector<int> freq(26,0);
+    for(char c:s) freq[c-'a']++;
+    priority_queue<int> pq;
+    for(int f:freq) if(f) pq.push(f);
+    while(k--){
+        int f=pq.top(); pq.pop();
+        if(f-1>0) pq.push(f-1);
+    }
+    int sum=0;
+    while(!pq.empty()){ int f=pq.top(); pq.pop(); sum+=f*f; }
+    return sum;
+}
+
+int main(){
+    string s; int k; cin >> s >> k;
+    cout << minSumSquares(s,k) << endl;
+    return 0;
+}
+Output:
+85) Queue based approach or first non-repeating character in a stream.
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+void firstNonRepeating(string s){
+    vector<int> freq(26,0);
+    queue<char> q;
+    for(char c:s){
+        freq[c-'a']++;
+        q.push(c);
+        while(!q.empty() && freq[q.front()-'a']>1) q.pop();
+        cout << (q.empty() ? '#' : q.front());
+    }
+    cout << endl;
+}
+
+int main(){
+    string s; cin >> s;
+    firstNonRepeating(s);
+    return 0;
+}
+Output:
+86) Next Smaller Element
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> nextSmaller(vector<int> &arr){
+    int n=arr.size();
+    vector<int> res(n,-1);
+    stack<int> st;
+    for(int i=n-1;i>=0;i--){
+        while(!st.empty() && st.top()>=arr[i]) st.pop();
+        if(!st.empty()) res[i]=st.top();
+        st.push(arr[i]);
+    }
+    return res;
+}
+
+int main(){
+    int n; cin >> n;
+    vector<int> arr(n);
+    for(int i=0;i<n;i++) cin >> arr[i];
+    vector<int> ans=nextSmaller(arr);
+    for(int x:ans) cout << x << " ";
+    cout << endl;
+    return 0;
+}
+Output:
+87) Write a Program to check whether a string is a valid shuffle of two strings or not
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+bool isValidShuffle(string s1, string s2, string shuffle){
+    int i=0,j=0;
+    for(char c:shuffle){
+        if(i<s1.size() && c==s1[i]) i++;
+        else if(j<s2.size() && c==s2[j]) j++;
+        else return false;
+    }
+    return i==s1.size() && j==s2.size();
+}
+
+int main(){
+    string s1,s2,shuffle;
+    cin >> s1 >> s2 >> shuffle;
+    cout << (isValidShuffle(s1,s2,shuffle)?"Yes":"No") << endl;
+    return 0;
+}
+Output:
+88) Count and Say problem
+Code: #include <bits/stdc++.h>
+using namespace std;
+
+string countAndSay(int n){
+    if(n==1) return "1";
+    string s="1";
+    for(int i=2;i<=n;i++){
+        string t=""; int count=1;
+        for(int j=0;j<s.size();j++){
+            if(j+1<s.size() && s[j]==s[j+1]) count++;
+            else { t+=to_string(count)+s[j]; count=1; }
+        }
+        s=t;
+    }
+    return s;
+}
+
+int main(){
+    int n; cin >> n;
+    cout << countAndSay(n) << endl;
+    return 0;
+}
+Output:
+89) Write a program to find the longest Palindrome in a string.[ Longest palindromic Substring]
+Code: #include <bits/stdc++.h>
+using namespace std;
+
+string longestPalindrome(string s){
+    int n=s.size(), start=0,maxLen=1;
+    for(int i=0;i<n;i++){
+        int l=i,r=i;
+        while(l>=0 && r<n && s[l]==s[r]) { if(r-l+1>maxLen){start=l; maxLen=r-l+1;} l--; r++; }
+        l=i; r=i+1;
+        while(l>=0 && r<n && s[l]==s[r]) { if(r-l+1>maxLen){start=l; maxLen=r-l+1;} l--; r++; }
+    }
+    return s.substr(start,maxLen);
+}
+
+int main(){
+    string s; cin >> s;
+    cout << longestPalindrome(s) << endl;
+    return 0;
+}
+Output:
+90) Find Longest Recurring Subsequence in String
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+int longestRepeatingSubsequence(string s){
+    int n=s.size();
+    vector<vector<int>> dp(n+1,vector<int>(n+1,0));
+    for(int i=1;i<=n;i++)
+        for(int j=1;j<=n;j++)
+            if(s[i-1]==s[j-1] && i!=j) dp[i][j]=dp[i-1][j-1]+1;
+            else dp[i][j]=max(dp[i-1][j],dp[i][j-1]);
+    return dp[n][n];
+}
+
+int main(){
+    string s; cin >> s;
+    cout << longestRepeatingSubsequence(s) << endl;
+    return 0;
+}
+Output:
+91) Print all Subsequences of a string.
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+void printSubsequences(string s, string curr="", int i=0){
+    if(i==s.size()){ cout << curr << endl; return; }
+    printSubsequences(s,curr,i+1);
+    printSubsequences(s,curr+s[i],i+1);
+}
+
+int main(){
+    string s; cin >> s;
+    printSubsequences(s);
+    return 0;
+}
+Output:
+92)Print all the permutations of the given string
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+int main(){
+    string s; cin >> s;
+    sort(s.begin(), s.end());
+    do{
+        cout << s << endl;
+    } while(next_permutation(s.begin(), s.end()));
+    return 0;
+}
+Output:
+93)Split the Binary string into two substring with equal 0’s and 1’s
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+int countSplits(string s){
+    int c0=0,c1=0,res=0;
+    for(char c:s){
+        if(c=='0') c0++; else c1++;
+        if(c0==c1) res++;
+    }
+    return res;
+}
+
+int main(){
+    string s; cin >> s;
+    cout << countSplits(s) << endl;
+    return 0;
+}
+Output:
+94) Word Wrap Problem [VERY IMP].
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+int wordWrap(vector<int> &arr, int m){
+    int n=arr.size();
+    vector<int> dp(n+1,INT_MAX); dp[n]=0;
+    for(int i=n-1;i>=0;i++){
+        int len=-1;
+        for(int j=i;j<n;j++){
+            len+=arr[j]+1;
+            if(len>m) break;
+            int cost=(j==n-1?0:(m-len)*(m-len))+dp[j+1];
+            dp[i]=min(dp[i],cost);
+        }
+    }
+    return dp[0];
+}
+
+int main(){
+    int n,m; cin >> n >> m;
+    vector<int> arr(n);
+    for(int i=0;i<n;i++) cin >> arr[i];
+    cout << wordWrap(arr,m) << endl;
+    return 0;
+}
+Output:
+95) EDIT Distance [Very Imp]
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+int editDistance(string s1,string s2){
+    int n=s1.size(), m=s2.size();
+    vector<vector<int>> dp(n+1,vector<int>(m+1,0));
+    for(int i=0;i<=n;i++) dp[i][0]=i;
+    for(int j=0;j<=m;j++) dp[0][j]=j;
+    for(int i=1;i<=n;i++)
+        for(int j=1;j<=m;j++)
+            if(s1[i-1]==s2[j-1]) dp[i][j]=dp[i-1][j-1];
+            else dp[i][j]=1+min({dp[i-1][j], dp[i][j-1], dp[i-1][j-1]});
+    return dp[n][m];
+}
+
+int main(){
+    string s1,s2; cin >> s1 >> s2;
+    cout << editDistance(s1,s2) << endl;
+    return 0;
+}
+Output:
+96) Find next greater number with same set of digits. [Very Very IMP]
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+bool nextGreaterNumber(string &num){
+    int i=num.size()-2;
+    while(i>=0 && num[i]>=num[i+1]) i--;
+    if(i<0) return false;
+    int j=num.size()-1;
+    while(num[j]<=num[i]) j--;
+    swap(num[i],num[j]);
+    reverse(num.begin()+i+1,num.end());
+    return true;
+}
+
+int main(){
+    string num; cin >> num;
+    if(nextGreaterNumber(num)) cout << num << endl;
+    else cout << "Not possible\n";
+    return 0;
+}
+Output:
+97) Balanced Parenthesis problem.[Imp]
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+bool isBalanced(string s){
+    stack<char> st;
+    for(char c:s){
+        if(c=='('||c=='{'||c=='[') st.push(c);
+        else{
+            if(st.empty()) return false;
+            if((c==')' && st.top()!='(') || (c=='}' && st.top()!='{') || (c==']' && st.top()!='[')) return false;
+            st.pop();
+        }
+    }
+    return st.empty();
+}
+
+int main(){
+    string s; cin >> s;
+    cout << (isBalanced(s)?"Balanced":"Not Balanced") << endl;
+    return 0;
+}
+Output:
+98) Word break Problem[ Very Imp]
+Code:
+#include <bits/stdc++.h>
+using namespace std;
+
+bool wordBreak(string s, unordered_set<string> &dict){
+    vector<bool> dp(s.size()+1,false);
+    dp[0]=true;
+    for(int i=1;i<=s.size();i++)
+        for(int j=0;j<i;j++)
+            if(dp[j] && dict.count(s.substr(j,i-j))) dp[i]=true;
+    return dp[s.size()];
+}
+
+int main(){
+    string s; int n; cin >> s >> n;
+    unordered_set<string> dict;
+    for(int i=0;i<n;i++){ string w; cin >> w; dict.insert(w); }
+    cout << (wordBreak(s,dict)?"Yes":"No") << endl;
+    return 0;
+}
+Output:
+99) Count All Palindromic Subsequence in a given String.
+Code: #include <bits/stdc++.h>
+using namespace std;
+
+int countPalindromicSubseq(string s){
+    int n=s.size();
+    vector<vector<int>> dp(n,vector<int>(n,0));
+    for(int i=n-1;i>=0;i--){
+        dp[i][i]=1;
+        for(int j=i+1;j<n;j++){
+            if(s[i]==s[j]) dp[i][j]=dp[i+1][j]+dp[i][j-1]+1;
+            else dp[i][j]=dp[i+1][j]+dp[i][j-1]-dp[i+1][j-1];
+        }
+    }
+    return dp[0][n-1];
+}
+
+int main(){
+    string s; cin >> s;
+    cout << countPalindromicSubseq(s) << endl;
+    return 0;
+}
+Output:
+100) Count of number of given string in 2D character array
+Code: #include <bits/stdc++.h>
+using namespace std;
+
+bool search2D(vector<vector<char>> &mat,int x,int y,string &word,int idx){
+    if(idx==word.size()) return true;
+    int n=mat.size(), m=mat[0].size();
+    if(x<0||x>=n||y<0||y>=m||mat[x][y]!=word[idx]) return false;
+    char temp=mat[x][y]; mat[x][y]='*';
+    int dx[]={-1,0,1,0,-1,-1,1,1};
+    int dy[]={0,1,0,-1,-1,1,-1,1};
+    bool found=false;
+    for(int d=0;d<8;d++)
+        found |= search2D(mat,x+dx[d],y+dy[d],word,idx+1);
+    mat[x][y]=temp;
+    return found;
+}
+
+int countOccurrences(vector<vector<char>> &mat,string &word){
+    int count=0;
+    for(int i=0;i<mat.size();i++)
+        for(int j=0;j<mat[0].size();j++)
+            if(search2D(mat,i,j,word,0)) count++;
+    return count;
+}
+
+int main(){
+    int n,m; cin >> n >> m;
+    vector<vector<char>> mat(n,vector<char>(m));
+    for(int i=0;i<n;i++) for(int j=0;j<m;j++) cin >> mat[i][j];
+    string word; cin >> word;
+    cout << countOccurrences(mat,word) << endl;
+    return 0;
+}
+Output:
+
